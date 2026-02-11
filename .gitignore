@@ -1,0 +1,174 @@
+# ========================================
+# PracticaApiGateway - Git Ignore
+# Microservicios con PHP, Node.js y Docker
+# ========================================
+
+# ============ PHP ============
+# Composer dependencies
+**/vendor/
+composer.phar
+composer.lock
+
+# Laravel/PHP logs
+*.log
+**/storage/logs/*.log
+
+# ============ Node.js ============
+# Dependencies
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Node build outputs
+dist/
+build/
+
+# ============ Docker ============
+# Docker volumes y datos persistentes
+docker-volumes/
+**/data/db/
+**/data/postgres/
+**/data/redis/
+
+# Docker logs
+*.log
+
+# ============ Bases de Datos ============
+# PostgreSQL
+*.sql.backup
+*.dump
+pgdata/
+
+# MongoDB
+*.bson
+mongo-data/
+
+# Redis
+dump.rdb
+appendonly.aof
+
+# ============ Variables de Entorno ============
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+*.env
+
+# Permitir archivos de ejemplo
+!.env.example
+!**/.env.example
+
+# ============ IDEs y Editores ============
+# Visual Studio Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+*.code-workspace
+
+# PhpStorm / IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# NetBeans
+nbproject/
+
+# ============ Sistema Operativo ============
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.directory
+
+# ============ Temporales y Cache ============
+# Logs generales
+logs/
+*.log
+npm-debug.log*
+
+# Temporal files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~
+
+# Cache
+.cache/
+*.cache
+.npm/
+.eslintcache
+
+# ============ Archivos de Sesión ============
+# Express sessions
+sessions/
+.sessions
+
+# ============ Certificados y Claves ============
+# SSL/TLS certificates
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+
+# SSH keys
+id_rsa
+id_rsa.pub
+*.ppk
+
+# ============ Build y Compilados ============
+# PHP compiled files
+*.class
+
+# Archivos compilados
+*.com
+*.dll
+*.exe
+*.o
+*.so
+
+# ============ Testing ============
+# Coverage reports
+coverage/
+.nyc_output/
+*.lcov
+.phpunit.result.cache
+
+# ============ Varios ============
+# Backups
+*.backup
+*.bak
+*.old
+
+# Compressed files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# ============ Mantener Estructura ============
+# Mantener carpetas vacías con .gitkeep
+!.gitkeep

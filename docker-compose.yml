@@ -1,0 +1,131 @@
+# Docker Compose para API Gateway con Microservicios
+# 
+# Este archivo orquesta todos los servicios necesarios para el proyecto:
+# - API Gateway (Krakend) como punto de entrada único
+# - 3 microservicios PHP (usuario, inventario, carrito)
+# - 3 bases de datos (PostgreSQL, MongoDB, Redis)
+# - UI web (Node.js + Express + Pug)
+#
+# Para ejecutar: docker compose up -d --build
+
+services:
+  # API Gateway - Punto de entrada único para todos los microservicios
+  # Utiliza Krakend para enrutamiento, balanceeo y agregación
+  api-gateway:
+    container_name: api-gateway
+    image: devopsfaith/krakend:2.4.3
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./krakend/krakend.json:/etc/krakend/krakend.json
+    depends_on:
+      - usuario-service
+      - inventario-service
+      - carrito-service
+
+  # Microservicios PHP con arquitectura hexagonal
+  # Cada servicio maneja un dominio específico del negocio
+  
+  # Servicio de Usuario - Autenticación, JWT, perfiles
+  usuario-service:
+    container_name: usuario-service
+    build: ./src/usuario
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db-usuario
+    environment:
+      DB_HOST: db-usuario
+      DB_PORT: 5432
+      DB_NAME: usuarios
+      DB_USER: admin
+      DB_PASSWORD: admin123
+      JWT_SECRET: mi_secreto_practica_2024
+
+  # Servicio de Inventario - Catálogo de productos con MongoDB
+  inventario-service:
+    container_name: inventario-service
+    build: ./src/inventario
+    ports:
+      - "3002:3002"
+    depends_on:
+      mongo-inventario:
+        condition: service_healthy
+      mongo-init:
+        condition: service_completed_successfully
+    environment:
+      MONGO_INITDB_DATABASE: inventario
+      MONGO_HOST: mongo-inventario
+
+  # Servicio de Carrito - Gestión de carritos con Redis
+  carrito-service:
+    container_name: carrito-service
+    build: ./src/carrito_de_compras
+    ports:
+      - "3003:3003"
+    depends_on:
+      - redis-carrito
+    environment:
+      REDIS_HOST: redis-carrito
+
+  # Bases de datos - Cada microservicio tiene su propia BD
+  # Siguiendo el patrón Database-per-Service
+  
+  # PostgreSQL para datos relacionales de usuarios
+  db-usuario:
+    container_name: db-usuario
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: usuarios
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    volumes:
+      - ./src/usuario/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # MongoDB para catálogo de productos (NoSQL)
+  # Puerto mapeado a 27018 para evitar conflictos locales
+  # Actualizado a MongoDB 8.0 para mejor rendimiento y características
+  mongo-inventario:
+    container_name: mongo-inventario
+    image: mongo:8
+    ports:
+      - "27018:27017"
+    environment:
+      MONGO_INITDB_DATABASE: inventario
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Servicio de inicialización de MongoDB
+  # Se ejecuta una vez para poblar la base de datos
+  mongo-init:
+    container_name: mongo-init
+    image: mongo:8
+    depends_on:
+      mongo-inventario:
+        condition: service_healthy
+    volumes:
+      - ./init_simple.js:/init_simple.js
+    command: >
+      mongosh --host mongo-inventario:27017 --file /init_simple.js
+    restart: on-failure
+
+  # Redis para sesión de carrito (cache en memoria)
+  redis-carrito:
+    container_name: redis-carrito
+    image: redis:7-alpine
+
+  # Interfaz web para pruebas y demostración
+  # Node.js + Express + Pug + Bootstrap
+  ui:
+    container_name: ui
+    build: ./src/ui
+    ports:
+      - "3000:3000"
+    environment:
+      - API_GATEWAY_URL=http://api-gateway:8080
+    depends_on:
+      - api-gateway

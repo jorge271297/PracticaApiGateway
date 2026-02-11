@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo API Gateway</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f7f7f7; }
+    h1 { color: #2c3e50; }
+    .container { background: #fff; padding: 2em; border-radius: 8px; max-width: 600px; margin: auto; box-shadow: 0 2px 8px #0001; }
+    label { display: block; margin-top: 1em; }
+    input, select, button { margin-top: 0.5em; width: 100%; padding: 0.5em; border-radius: 4px; border: 1px solid #ccc; }
+    .result { background: #eafaf1; border: 1px solid #b2dfdb; margin-top: 1em; padding: 1em; border-radius: 4px; }
+    .productos { max-height: 200px; overflow-y: auto; margin-bottom: 1em; }
+    .productos ul { padding-left: 1em; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Demo API Gateway</h1>
+    <form id="loginForm">
+      <label>Email:
+        <input type="email" id="email" value="" required>
+      </label>
+      <label>Contraseña:
+        <input type="password" id="password" value="123456" required>
+      </label>
+      <button type="submit">Iniciar sesión</button>
+    </form>
+    <div id="loginResult" class="result" style="display:none;"></div>
+    <div id="mainFlow" style="display:none;">
+      <h2>Productos</h2>
+      <div class="productos" id="productosList"></div>
+      <form id="addCarritoForm">
+        <label>SKU del producto:
+          <input type="text" id="sku" required>
+        </label>
+        <label>Cantidad:
+          <input type="number" id="cantidad" min="1" value="1" required>
+        </label>
+        <button type="submit">Agregar al carrito</button>
+      </form>
+      <div id="carritoResult" class="result" style="display:none;"></div>
+    </div>
+  </div>
+  <script>
+    const apiBase = 'http://localhost:8080';
+    let token = '';
+
+    document.getElementById('loginForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const res = await fetch(apiBase + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      const resultDiv = document.getElementById('loginResult');
+      if (data.token) {
+        token = data.token;
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Login exitoso';
+        document.getElementById('mainFlow').style.display = 'block';
+        cargarProductos();
+      } else {
+        resultDiv.style.display = 'block';
+        resultDiv.textContent = 'Error: ' + (data.message || JSON.stringify(data));
+      }
+    };
+
+    async function cargarProductos() {
+      const res = await fetch(apiBase + '/api/productos');
+      const productos = await res.json();
+      const listDiv = document.getElementById('productosList');
+      if (Array.isArray(productos)) {
+        let html = '<ul>';
+        productos.slice(0, 20).forEach(p => {
+          html += `<li><b>${p.nombre}</b> (SKU: ${p.sku}) - $${p.precio} | Stock: ${p.stock}</li>`;
+        });
+        html += '</ul>';
+        html += '<small>Mostrando 20 de ' + productos.length + ' productos...</small>';
+        listDiv.innerHTML = html;
+      } else {
+        listDiv.textContent = 'No se pudieron cargar productos.';
+      }
+    }
+
+    document.getElementById('addCarritoForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const sku = document.getElementById('sku').value;
+      const cantidad = document.getElementById('cantidad').value;
+      // Simulación: solo muestra el resultado, no implementa lógica real de carrito
+      const res = await fetch(apiBase + '/api/carrito', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+        body: JSON.stringify({ sku, cantidad })
+      });
+      const data = await res.json();
+      const resultDiv = document.getElementById('carritoResult');
+      resultDiv.style.display = 'block';
+      resultDiv.textContent = data.message || JSON.stringify(data);
+    };
+  </script>
+</body>
+</html>

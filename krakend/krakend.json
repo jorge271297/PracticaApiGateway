@@ -1,0 +1,79 @@
+{
+  "version": 3,
+  "name": "API Gateway Practica",
+  "port": 8080,
+  "host": ["0.0.0.0"],
+  "endpoints": [
+    {
+      "endpoint": "/api/health",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/health",
+          "host": ["http://usuario-service:3001"],
+          "group": "usuario"
+        },
+        {
+          "url_pattern": "/health",
+          "host": ["http://inventario-service:3002"],
+          "group": "inventario"
+        },
+        {
+          "url_pattern": "/health",
+          "host": ["http://carrito-service:3003"],
+          "group": "carrito"
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/auth/registro",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/api/usuarios/registro",
+          "host": ["http://usuario-service:3001"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/auth/login",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/api/usuarios/login",
+          "host": ["http://usuario-service:3001"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/productos",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/productos",
+          "host": ["http://inventario-service:3002"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/carrito/{usuario_id}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/carrito/{usuario_id}",
+          "host": ["http://carrito-service:3003"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/carrito",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/api/carrito",
+          "host": ["http://carrito-service:3003"]
+        }
+      ]
+    }
+  ]
+}

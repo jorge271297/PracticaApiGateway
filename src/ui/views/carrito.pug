@@ -1,0 +1,102 @@
+extends layout
+
+block content
+  h2.mb-4
+    i.fas.fa-shopping-cart.me-2.text-primary
+    | Mi Carrito de Compras
+  
+  if added
+    .alert.alert-success.alert-dismissible.fade.show
+      i.fas.fa-check-circle.me-2
+      | Producto agregado al carrito exitosamente
+      button.btn-close(type="button" data-bs-dismiss="alert")
+  
+  if error
+    .alert.alert-danger.alert-dismissible.fade.show
+      i.fas.fa-exclamation-triangle.me-2
+      | #{error}
+      button.btn-close(type="button" data-bs-dismiss="alert")
+  
+  if carrito
+    if carrito.items && carrito.items.length > 0
+      .card.shadow-sm.mb-4
+        .card-header.bg-primary.text-white
+          h5.mb-0
+            i.fas.fa-list.me-2
+            | Productos en tu carrito
+        .card-body.p-0
+          .table-responsive
+            table.table.table-hover.mb-0
+              thead.table-light
+                tr
+                  th
+                    i.fas.fa-box.me-2
+                    | Producto
+                  th.text-center
+                    i.fas.fa-sort-numeric-up.me-2
+                    | Cantidad
+                  th.text-end
+                    i.fas.fa-dollar-sign.me-2
+                    | Precio Unit.
+                  th.text-end
+                    i.fas.fa-calculator.me-2
+                    | Subtotal
+              tbody
+                each item in carrito.items
+                  tr
+                    td
+                      strong #{item.producto || item.nombre || 'Producto'}
+                      if item.sku
+                        br
+                        small.text-muted SKU: #{item.sku}
+                    td.text-center
+                      span.badge.bg-info.fs-6 #{item.cantidad}
+                    td.text-end $#{item.precio || '0.00'}
+                    td.text-end
+                      strong.text-success $#{((item.precio || 0) * (item.cantidad || 1)).toFixed(2)}
+      
+      .card.shadow-sm.border-success
+        .card-body
+          .row
+            .col-md-8
+              h4.mb-0
+                i.fas.fa-receipt.me-2.text-success
+                | Total a pagar:
+            .col-md-4.text-end
+              h3.text-success.mb-0
+                strong $#{carrito.total || (carrito.items.reduce((sum, item) => sum + ((item.precio || 0) * (item.cantidad || 1)), 0)).toFixed(2)}
+          
+          hr
+          
+          .d-grid.gap-2.d-md-flex.justify-content-md-end
+            a.btn.btn-outline-primary(href="/productos")
+              i.fas.fa-arrow-left.me-2
+              | Seguir Comprando
+            button.btn.btn-success.btn-lg(disabled)
+              i.fas.fa-credit-card.me-2
+              | Proceder al Pago
+              small.ms-2 (Próximamente)
+    
+    else
+      .card.shadow-sm.text-center.py-5
+        .card-body
+          i.fas.fa-shopping-cart.fa-5x.text-muted.mb-4.opacity-50
+          h4.text-muted El carrito está vacío
+          p.text-muted ¡Agrega productos para comenzar tu compra!
+          a.btn.btn-primary.btn-lg.mt-3(href="/productos")
+            i.fas.fa-boxes.me-2
+            | Ver Productos
+    
+    if carrito.message
+      .alert.alert-info.mt-3
+        i.fas.fa-info-circle.me-2
+        | #{carrito.message}
+  
+  else
+    .alert.alert-warning.text-center.py-4
+      i.fas.fa-exclamation-triangle.fa-2x.mb-3.d-block
+      h5 No se pudo cargar el carrito
+      p Intenta nuevamente más tarde
+      a.btn.btn-primary(href="/productos")
+        i.fas.fa-redo.me-2
+        | Ir a Productos

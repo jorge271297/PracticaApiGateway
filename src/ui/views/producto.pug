@@ -1,0 +1,125 @@
+extends layout
+
+block content
+  if error
+    .alert.alert-danger
+      i.fas.fa-exclamation-triangle.me-2
+      | #{error}
+    a.btn.btn-primary(href="/productos")
+      i.fas.fa-arrow-left.me-2
+      | Volver a productos
+  
+  if producto
+    .row
+      .col-md-6
+        .card.shadow-sm.mb-4
+          .card-body.text-center.p-5
+            i.fas.fa-box-open.fa-5x.text-primary.mb-3
+            h3.text-muted= producto.categoria
+      
+      .col-md-6
+        h2.mb-3
+          i.fas.fa-tag.me-2.text-primary
+          | #{producto.nombre}
+        
+        .card.shadow-sm.mb-4
+          .card-body
+            .row.mb-3
+              .col-6
+                strong
+                  i.fas.fa-barcode.me-2
+                  | SKU:
+              .col-6.text-end
+                span.badge.bg-secondary= producto.sku
+            
+            .row.mb-3
+              .col-6
+                strong
+                  i.fas.fa-dollar-sign.me-2
+                  | Precio:
+              .col-6.text-end
+                h4.text-success.mb-0 $#{producto.precio}
+            
+            .row.mb-3
+              .col-6
+                strong
+                  i.fas.fa-boxes.me-2
+                  | Stock:
+              .col-6.text-end
+                if producto.stock > 10
+                  span.badge.bg-success= producto.stock + ' unidades'
+                else if producto.stock > 0
+                  span.badge.bg-warning= producto.stock + ' unidades'
+                else
+                  span.badge.bg-danger Agotado
+            
+            .row.mb-3
+              .col-6
+                strong
+                  i.fas.fa-folder.me-2
+                  | Categoría:
+              .col-6.text-end
+                span.badge.bg-info= producto.categoria
+            
+            if producto.marca
+              .row.mb-3
+                .col-6
+                  strong
+                    i.fas.fa-copyright.me-2
+                    | Marca:
+                .col-6.text-end
+                  span.text-muted= producto.marca
+            
+            if producto.descripcion
+              hr
+              .row
+                .col-12
+                  strong
+                    i.fas.fa-info-circle.me-2
+                    | Descripción:
+                  p.mt-2.text-muted= producto.descripcion
+        
+        if login && producto.stock > 0
+          .card.shadow-sm.border-success
+            .card-header.bg-success.text-white
+              h5.mb-0
+                i.fas.fa-cart-plus.me-2
+                | Agregar al Carrito
+            .card-body
+              form(action="/carrito/agregar" method="post")
+                input(type="hidden" name="sku" value=producto.sku)
+                .mb-3
+                  label.form-label(for="cantidad")
+                    i.fas.fa-sort-numeric-up.me-2
+                    | Cantidad:
+                  input.form-control.form-control-lg#cantidad(
+                    type="number" 
+                    name="cantidad" 
+                    min="1" 
+                    max=producto.stock
+                    value="1" 
+                    required
+                  )
+                  small.form-text.text-muted Disponible: #{producto.stock} unidades
+                
+                .d-grid.gap-2
+                  button.btn.btn-success.btn-lg(type="submit")
+                    i.fas.fa-cart-plus.me-2
+                    | Agregar al Carrito
+                  a.btn.btn-outline-secondary(href="/productos")
+                    i.fas.fa-arrow-left.me-2
+                    | Seguir Comprando
+        else if !login
+          .alert.alert-warning
+            i.fas.fa-exclamation-triangle.me-2
+            | Debes iniciar sesión para agregar productos al carrito
+            a.btn.btn-primary.ms-3(href="/")
+              i.fas.fa-sign-in-alt.me-2
+              | Iniciar Sesión
+        else
+          .alert.alert-danger
+            i.fas.fa-times-circle.me-2
+            | Producto agotado
+          a.btn.btn-outline-secondary(href="/productos")
+            i.fas.fa-arrow-left.me-2
+            | Volver a productos

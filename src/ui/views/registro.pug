@@ -1,0 +1,74 @@
+extends layout
+
+block content
+  .row.justify-content-center
+    .col-md-6.col-lg-5
+      if error
+        .alert.alert-danger.alert-dismissible.fade.show
+          i.fas.fa-exclamation-triangle.me-2
+          | #{error}
+          button.btn-close(type="button" data-bs-dismiss="alert")
+      
+      if registro
+        .alert.alert-success.alert-dismissible.fade.show
+          i.fas.fa-check-circle.me-2
+          | #{registro.message || 'Usuario registrado exitosamente'}
+          button.btn-close(type="button" data-bs-dismiss="alert")
+        .text-center.mt-3
+          a.btn.btn-primary.btn-lg(href="/")
+            i.fas.fa-sign-in-alt.me-2
+            | Iniciar Sesión
+      else
+        .card.shadow-lg.border-0
+          .card-header.bg-success.text-white.text-center.py-4
+            h2.mb-0
+              i.fas.fa-user-plus.me-2
+              | Crear Cuenta Nueva
+          
+          .card-body.p-4
+            form(action="/registro" method="post")
+              .mb-3
+                label.form-label(for="nombre")
+                  i.fas.fa-user.me-2
+                  | Nombre Completo
+                input.form-control.form-control-lg#nombre(
+                  type="text" 
+                  name="nombre" 
+                  placeholder="Juan Pérez"
+                  required
+                )
+              
+              .mb-3
+                label.form-label(for="email")
+                  i.fas.fa-envelope.me-2
+                  | Correo Electrónico
+                input.form-control.form-control-lg#email(
+                  type="email" 
+                  name="email" 
+                  placeholder="tu@email.com"
+                  required
+                )
+              
+              .mb-3
+                label.form-label(for="password")
+                  i.fas.fa-lock.me-2
+                  | Contraseña
+                input.form-control.form-control-lg#password(
+                  type="password" 
+                  name="password" 
+                  placeholder="Mínimo 6 caracteres"
+                  minlength="6"
+                  required
+                )
+                small.form-text.text-muted Mínimo 6 caracteres
+              
+              .d-grid.gap-2.mt-4
+                button.btn.btn-success.btn-lg(type="submit")
+                  i.fas.fa-user-plus.me-2
+                  | Crear Cuenta
+          
+          .card-footer.text-center.py-3
+            p.mb-0.text-muted ¿Ya tienes cuenta?
+            a.btn.btn-outline-primary.mt-2(href="/")
+              i.fas.fa-sign-in-alt.me-2
+              | Iniciar Sesión

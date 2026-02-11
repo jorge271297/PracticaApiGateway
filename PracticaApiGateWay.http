@@ -1,0 +1,15 @@
+# Registrar usuario
+curl -X POST http://localhost:8080/api/auth/registro \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"123456","nombre":"Test User"}'
+
+# Login
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@test.com","password":"123456"}'
+
+# Obtener productos
+curl http://localhost:8080/api/productos
+
+# Verificar health
+curl http://localhost:8080/api/health

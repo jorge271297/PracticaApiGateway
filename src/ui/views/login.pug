@@ -1,0 +1,61 @@
+extends layout
+
+block content
+  .row.justify-content-center
+    .col-md-6.col-lg-5
+      if error
+        .alert.alert-danger.alert-dismissible.fade.show
+          i.fas.fa-exclamation-triangle.me-2
+          | #{error}
+          button.btn-close(type="button" data-bs-dismiss="alert")
+      
+      .card.shadow-lg.border-0
+        .card-header.bg-primary.text-white.text-center.py-4
+          h2.mb-0
+            i.fas.fa-sign-in-alt.me-2
+            | Iniciar Sesión
+        
+        .card-body.p-4
+          form(action="/login" method="post")
+            .mb-3
+              label.form-label(for="email")
+                i.fas.fa-envelope.me-2
+                | Correo Electrónico
+              input.form-control.form-control-lg#email(
+                type="email" 
+                name="email" 
+                placeholder="tu@email.com"
+                value="" 
+                required
+              )
+            
+            .mb-3
+              label.form-label(for="password")
+                i.fas.fa-lock.me-2
+                | Contraseña
+              input.form-control.form-control-lg#password(
+                type="password" 
+                name="password" 
+                placeholder="••••••••"
+                required
+              )
+              small.form-text.text-muted Demo: cualquier contraseña funciona
+            
+            .d-grid.gap-2.mt-4
+              button.btn.btn-primary.btn-lg(type="submit")
+                i.fas.fa-sign-in-alt.me-2
+                | Iniciar Sesión
+        
+        .card-footer.text-center.py-3
+          p.mb-0.text-muted ¿No tienes cuenta?
+          a.btn.btn-outline-success.mt-2(href="/registro")
+            i.fas.fa-user-plus.me-2
+            | Regístrate Gratis
+      
+      .text-center.mt-4
+        .card.bg-light.border-0
+          .card-body
+            h6.text-muted
+              i.fas.fa-info-circle.me-2
+              | Demo API Gateway
+            p.small.mb-0 Proyecto de microservicios con KrakenD

@@ -1,0 +1,97 @@
+extends layout
+
+block content
+  .row.justify-content-center
+    .col-md-8.col-lg-6
+      if error
+        .alert.alert-danger.alert-dismissible.fade.show
+          i.fas.fa-exclamation-triangle.me-2
+          | #{error}
+          button.btn-close(type="button" data-bs-dismiss="alert")
+      
+      if perfil
+        .card.shadow-lg.border-0.mb-4
+          .card-header.bg-gradient.text-white.text-center.py-4(style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);")
+            .mb-3
+              i.fas.fa-user-circle.fa-4x
+            h2.mb-0 #{perfil.nombre || 'Usuario'}
+          
+          .card-body.p-4
+            .row.mb-4
+              .col-12
+                h5.text-muted.mb-3
+                  i.fas.fa-info-circle.me-2
+                  | Información Personal
+                hr
+            
+            .row.mb-3
+              .col-md-4
+                strong
+                  i.fas.fa-user.me-2.text-primary
+                  | Nombre:
+              .col-md-8
+                p.mb-0 #{perfil.nombre || 'No disponible'}
+            
+            .row.mb-3
+              .col-md-4
+                strong
+                  i.fas.fa-envelope.me-2.text-primary
+                  | Email:
+              .col-md-8
+                p.mb-0 #{perfil.email || 'No disponible'}
+            
+            .row.mb-3
+              .col-md-4
+                strong
+                  i.fas.fa-key.me-2.text-primary
+                  | Token:
+              .col-md-8
+                .input-group
+                  input.form-control.bg-light(type="text" value=perfil.token readonly)
+                  button.btn.btn-outline-secondary(type="button" onclick="navigator.clipboard.writeText(this.previousElementSibling.value); this.innerHTML='<i class=\'fas fa-check\'></i> Copiado'; setTimeout(() => this.innerHTML='<i class=\'fas fa-copy\'></i>', 2000);")
+                    i.fas.fa-copy
+                small.form-text.text-muted Token de autenticación JWT
+            
+            hr.my-4
+            
+            .row
+              .col-12
+                h5.text-muted.mb-3
+                  i.fas.fa-chart-line.me-2
+                  | Estadísticas
+                .row.text-center
+                  .col-md-4.mb-3
+                    .card.bg-light.border-0
+                      .card-body
+                        i.fas.fa-shopping-cart.fa-2x.text-primary.mb-2
+                        h6.text-muted Compras
+                        h4.mb-0 0
+                  .col-md-4.mb-3
+                    .card.bg-light.border-0
+                      .card-body
+                        i.fas.fa-heart.fa-2x.text-danger.mb-2
+                        h6.text-muted Favoritos
+                        h4.mb-0 0
+                  .col-md-4.mb-3
+                    .card.bg-light.border-0
+                      .card-body
+                        i.fas.fa-clock.fa-2x.text-warning.mb-2
+                        h6.text-muted Última visita
+                        h4.mb-0 Hoy
+          
+          .card-footer.text-center.py-3
+            .d-grid.gap-2.d-md-flex.justify-content-md-center
+              a.btn.btn-primary(href="/productos")
+                i.fas.fa-shopping-bag.me-2
+                | Ver Productos
+              a.btn.btn-outline-secondary(href="/carrito")
+                i.fas.fa-shopping-cart.me-2
+                | Mi Carrito
+      else
+        .alert.alert-warning.text-center.py-5
+          i.fas.fa-exclamation-triangle.fa-3x.mb-3
+          h4 No se pudo cargar el perfil
+          p Intenta nuevamente más tarde
+          a.btn.btn-primary(href="/")
+            i.fas.fa-home.me-2
+            | Volver al Inicio
