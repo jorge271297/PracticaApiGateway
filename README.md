@@ -291,8 +291,8 @@ La interfaz web está disponible en **http://localhost:3000** e incluye:
 - ✅ Navbar responsivo con menú
 - ✅ Diseño moderno con Bootstrap 5
 
-### 6. Servicio de Pagos
-- **Puerto**: 3004
+-### 6. Servicio de Pagos
+- **Puerto (host -> container)**: 3004 -> 80
 - **Tipo**: Servicio simulado (mock) en Node.js
 - **Funcionalidad**: Simula el procesamiento de pagos para propósitos de prueba. Al confirmar un pago, el servicio:
    - persiste un registro básico del pago en `payments_store.json`,

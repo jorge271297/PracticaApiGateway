@@ -255,7 +255,7 @@ Agrega un producto al carrito del usuario.
   "backend": [
     {
       "url_pattern": "/api/pagos",
-      "host": ["http://payment-service:3004"]
+      "host": ["http://payment-service:80"]
     }
   ]
 }
@@ -270,7 +270,7 @@ Agrega un producto al carrito del usuario.
   "backend": [
     {
       "url_pattern": "/api/pagos/{payment_id}",
-      "host": ["http://payment-service:3004"]
+      "host": ["http://payment-service:80"]
     }
   ]
 }
@@ -278,15 +278,13 @@ Agrega un producto al carrito del usuario.
 
 > Nota: el `payment-service` es un mock en Node.js destinado a pruebas; en despliegue real el flujo de pagos debe estar protegido y ser asíncrono (Sagas/Eventos).
 
-
-**Request**:
+**Ejemplo de request (crear pago)**
 ```json
 {
   "usuario": "user_1",
-  "producto": "TEC-0001",
-  "cantidad": 2,
-  "precio": 1199.99,
-  "nombre": "iPhone 15 Pro Max"
+  "amount": 2399.98,
+  "method": "card",
+  "metadata": { "order_id": "order_123" }
 }
 ```
 
