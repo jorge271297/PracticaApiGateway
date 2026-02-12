@@ -244,6 +244,41 @@ Agrega un producto al carrito del usuario.
 }
 ```
 
+### 7. Pagos
+
+**Endpoint**: `POST /api/pagos` (Crear pago simulado)
+
+```json
+{
+  "endpoint": "/api/pagos",
+  "method": "POST",
+  "backend": [
+    {
+      "url_pattern": "/api/pagos",
+      "host": ["http://payment-service:3004"]
+    }
+  ]
+}
+```
+
+**Endpoint**: `GET /api/pagos/{payment_id}` (Obtener estado)
+
+```json
+{
+  "endpoint": "/api/pagos/{payment_id}",
+  "method": "GET",
+  "backend": [
+    {
+      "url_pattern": "/api/pagos/{payment_id}",
+      "host": ["http://payment-service:3004"]
+    }
+  ]
+}
+```
+
+> Nota: el `payment-service` es un mock en Node.js destinado a pruebas; en despliegue real el flujo de pagos debe estar protegido y ser asíncrono (Sagas/Eventos).
+
+
 **Request**:
 ```json
 {

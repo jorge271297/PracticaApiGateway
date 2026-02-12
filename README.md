@@ -239,6 +239,45 @@ Content-Type: application/json
 }
 ```
 
+### Pagos
+
+**Crear Pago (simulado)**
+```http
+POST http://localhost:8080/api/pagos
+Content-Type: application/json
+
+{
+   "usuario": "user_1",
+   "amount": 2399.98,
+   "method": "card",
+   "metadata": { "order_id": "order_123" }
+}
+```
+
+**Respuesta (éxito)**
+```json
+{
+   "payment_id": "pay_abc123",
+   "status": "success",
+   "timestamp": "2026-02-12T..."
+}
+```
+
+**Obtener estado de pago**
+```http
+GET http://localhost:8080/api/pagos/{payment_id}
+```
+
+**Respuesta (ejemplo)**
+```json
+{
+   "payment_id": "pay_abc123",
+   "status": "success",
+   "usuario": "user_1",
+   "amount": 2399.98
+}
+```
+
 ## 🌐 Interfaz Web
 
 La interfaz web está disponible en **http://localhost:3000** e incluye:
@@ -251,6 +290,16 @@ La interfaz web está disponible en **http://localhost:3000** e incluye:
 - ✅ Carrito de compras funcional
 - ✅ Navbar responsivo con menú
 - ✅ Diseño moderno con Bootstrap 5
+
+### 6. Servicio de Pagos
+- **Puerto**: 3004
+- **Tipo**: Servicio simulado (mock) en Node.js
+- **Funcionalidad**: Simula el procesamiento de pagos para propósitos de prueba. Al confirmar un pago, el servicio:
+   - persiste un registro básico del pago en `payments_store.json`,
+   - invoca al servicio de inventario para reducir stock (`/api/productos/reducir`),
+   - invoca al servicio de carrito para limpiar el carrito (`/api/carrito/clear`).
+- **Integración UI**: La interfaz web usa este endpoint para completar el flujo de compra (pago → inventario → limpieza de carrito).
+- **Notas**: Este servicio es intencionalmente simple para desarrollo; en producción se recomienda convertirlo en un servicio asíncrono con Sagas/eventos y mayor seguridad.
 
 ### Usuario de Prueba
 ```
