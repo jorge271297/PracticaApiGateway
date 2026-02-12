@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  h2.mb-4
+    i.fas.fa-receipt.me-2.text-primary
+    | Resultado del Pago
+
+  if result
+    if result.status === 'success'
+      .alert.alert-success
+        i.fas.fa-check-circle.me-2
+        | Pago procesado correctamente (ID: #{result.id})
+    else
+      .alert.alert-danger
+        i.fas.fa-times-circle.me-2
+        | Pago fallido (ID: #{result.id})
+
+    .card
+      .card-body
+        p
+          strong Usuario: 
+          | #{result.usuario}
+        p
+          strong Monto: 
+          | $#{result.amount}
+        p
+          strong Método: 
+          | #{result.method}
+        p
+          strong Fecha: 
+          | #{result.created_at}
+
+  else
+    .alert.alert-warning
+      | No se encontró información del pago
+
+  a.btn.btn-primary.mt-3(href='/productos') Volver al catálogo

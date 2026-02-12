@@ -68,6 +68,16 @@ services:
     environment:
       REDIS_HOST: redis-carrito
 
+  # Servicio de Pagos (simulado)
+  payment-service:
+    container_name: payment-service
+    build: ./src/payments
+    ports:
+      - "3004:80"
+    environment:
+      - NODE_ENV=production
+    depends_on: []
+
   # Bases de datos - Cada microservicio tiene su propia BD
   # Siguiendo el patrón Database-per-Service
   

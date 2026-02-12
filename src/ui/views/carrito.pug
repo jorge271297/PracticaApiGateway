@@ -67,15 +67,19 @@ block content
                 strong $#{carrito.total || (carrito.items.reduce((sum, item) => sum + ((item.precio || 0) * (item.cantidad || 1)), 0)).toFixed(2)}
           
           hr
-          
           .d-grid.gap-2.d-md-flex.justify-content-md-end
             a.btn.btn-outline-primary(href="/productos")
               i.fas.fa-arrow-left.me-2
               | Seguir Comprando
-            button.btn.btn-success.btn-lg(disabled)
-              i.fas.fa-credit-card.me-2
-              | Proceder al Pago
-              small.ms-2 (Próximamente)
+            if login
+              a.btn.btn-success.btn-lg(href="/pago")
+                i.fas.fa-credit-card.me-2
+                | Proceder al Pago
+            else
+              button.btn.btn-success.btn-lg(disabled)
+                i.fas.fa-credit-card.me-2
+                | Proceder al Pago
+                small.ms-2 (Inicia sesión)
     
     else
       .card.shadow-sm.text-center.py-5

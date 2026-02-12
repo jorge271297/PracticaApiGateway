@@ -75,5 +75,26 @@
         }
       ]
     }
+    ,
+    {
+      "endpoint": "/api/pagos",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/api/pagos",
+          "host": ["http://payment-service:80"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/api/pagos/{id}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/pagos/{id}",
+          "host": ["http://payment-service:80"]
+        }
+      ]
+    }
   ]
 }

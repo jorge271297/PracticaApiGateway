@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  h2.mb-4
+    i.fas.fa-credit-card.me-2.text-primary
+    | Pago - Procesar orden
+
+  if error
+    .alert.alert-danger #{error}
+
+  .row
+    .col-md-6
+      .card.mb-4
+        .card-header.bg-light
+          strong Resumen del carrito
+        .card-body
+          if carrito && carrito.items && carrito.items.length
+            ul.list-group
+              each item in carrito.items
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                  | #{item.nombre || item.producto}
+                  span.badge.bg-primary $#{((item.precio||0)*(item.cantidad||1)).toFixed(2)}
+          else
+            p.text-muted Carrito vacío
+          hr
+          h4 Total: $#{total.toFixed(2)}
+
+    .col-md-6
+      .card.mb-4
+        .card-header.bg-light
+          strong Detalles de pago (simulado)
+        .card-body
+          form(action='/pago/process' method='post')
+            .mb-3
+              label.form-label Nombre en la tarjeta
+              input.form-control(type='text' name='card_holder' required)
+            .mb-3
+              label.form-label Número de tarjeta
+              input.form-control(type='text' name='card_number' placeholder='4111 1111 1111 1111' required)
+            .row.mb-3
+              .col
+                label.form-label Expiración
+                input.form-control(type='text' name='expiry' placeholder='MM/AA' required)
+              .col
+                label.form-label CVC
+                input.form-control(type='text' name='cvc' placeholder='123' required)
+            input(type='hidden' name='amount' value=total)
+            input(type='hidden' name='currency' value='USD')
+            button.btn.btn-success.w-100(type='submit')
+              i.fas.fa-check-circle.me-2
+              | Pagar $#{total.toFixed(2)}

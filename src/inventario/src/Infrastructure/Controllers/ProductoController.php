@@ -89,6 +89,48 @@ class ProductoController
         ]);
     }
 
+    /**
+     * Reducir stock de múltiples productos
+     * Espera JSON: { items: [ { sku: 'SKU', cantidad: 2 }, ... ] }
+     */
+    public function reducir(): string
+    {
+        $data = json_decode(file_get_contents('php://input'), true) ?: [];
+        $items = $data['items'] ?? [];
+
+        if (!is_array($items) || empty($items)) {
+            http_response_code(400);
+            return json_encode(['error' => 'items requeridos']);
+        }
+
+        $results = [];
+        foreach ($items as $it) {
+            $sku = $it['sku'] ?? null;
+            $qty = isset($it['cantidad']) ? (int)$it['cantidad'] : 0;
+            if (!$sku || $qty <= 0) {
+                $results[] = ['sku' => $sku, 'success' => false, 'message' => 'sku o cantidad inválidos'];
+                continue;
+            }
+
+            $doc = $this->collection->findOne(['sku' => $sku]);
+            if (!$doc) {
+                $results[] = ['sku' => $sku, 'success' => false, 'message' => 'No encontrado'];
+                continue;
+            }
+
+            $current = $doc['stock'] ?? 0;
+            if ($current < $qty) {
+                $results[] = ['sku' => $sku, 'success' => false, 'message' => 'Stock insuficiente', 'stock' => $current];
+                continue;
+            }
+
+            $res = $this->collection->updateOne(['sku' => $sku], ['$inc' => ['stock' => -$qty]]);
+            $results[] = ['sku' => $sku, 'success' => $res->getModifiedCount() > 0, 'reduced' => $qty];
+        }
+
+        return json_encode(['results' => $results]);
+    }
+
     public function health(): string
     {
         try {

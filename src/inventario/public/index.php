@@ -27,6 +27,11 @@ switch ($path) {
             echo $controller->crear();
         }
         break;
+    case '/api/productos/reducir':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            echo $controller->reducir();
+        }
+        break;
         
     case '/health':
         echo $controller->health();

@@ -109,6 +109,24 @@ class CarritoController
         ]);
     }
 
+    /**
+     * Limpiar el carrito de un usuario
+     */
+    public function clear(): string
+    {
+        $data = json_decode(file_get_contents('php://input'), true);
+        $usuarioId = $data['usuario'] ?? null;
+
+        if (!$usuarioId) {
+            http_response_code(400);
+            return json_encode(['success' => false, 'message' => 'usuario requerido']);
+        }
+
+        $this->redis->del("carrito:$usuarioId");
+
+        return json_encode(['success' => true, 'message' => 'Carrito eliminado']);
+    }
+
     public function health(): string
     {
         try {

@@ -28,8 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 $controller = new App\Infrastructure\Controllers\CarritoController();
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Match para /api/carrito o /api/carrito/{usuario_id}
-if (preg_match('#^/api/carrito(/[^/]+)?$#', $path)) {
+// Match para /api/carrito/clear (POST), /api/carrito o /api/carrito/{usuario_id}
+if ($path === '/api/carrito/clear' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo $controller->clear();
+} elseif (preg_match('#^/api/carrito(/[^/]+)?$#', $path)) {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo $controller->obtener();
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -1,0 +1,5 @@
+{
+  "name": "payments-service",
+  "description": "Servicio simulado de pagos para PracticaApiGateway",
+  "require": {}
+}

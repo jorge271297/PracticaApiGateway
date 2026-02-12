@@ -247,6 +247,64 @@ app.get('/perfil', async (req, res) => {
   }
 });
 
+// Página de pago - muestra formulario con resumen del carrito
+app.get('/pago', async (req, res) => {
+  if (!session.token || !session.userId) return res.redirect('/');
+  try {
+    const r = await fetch(API_BASE + `/api/carrito/${session.userId}`);
+    const carrito = await r.json();
+    const total = parseFloat(carrito.total || 0);
+    res.render('pago', { login: !!session.token, carrito, total, currentPage: 'pago', error: null });
+  } catch (e) {
+    res.render('pago', { login: !!session.token, carrito: { items: [] }, total: 0, currentPage: 'pago', error: 'No se pudo cargar carrito' });
+  }
+});
+
+// Procesar pago (simulado) - envía al servicio de pagos a través del API Gateway
+app.post('/pago/process', async (req, res) => {
+  if (!session.token || !session.userId) return res.redirect('/');
+  try {
+    const amount = parseFloat(req.body.amount) || 0;
+    const body = {
+      usuario: session.userId,
+      amount,
+      currency: req.body.currency || 'USD',
+      method: 'card',
+      metadata: { card_holder: req.body.card_holder || 'Anon' }
+    };
+
+    const r = await fetch(API_BASE + '/api/pagos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    const data = await r.json();
+    if (data.payment_id) {
+      res.redirect(`/pago/result?id=${data.payment_id}`);
+    } else {
+      res.render('pago', { login: !!session.token, carrito: { items: [] }, total: amount, currentPage: 'pago', error: 'Error procesando pago' });
+    }
+  } catch (e) {
+    console.error('Error procesando pago:', e);
+    res.render('pago', { login: !!session.token, carrito: { items: [] }, total: 0, currentPage: 'pago', error: 'Error de conexión' });
+  }
+});
+
+// Resultado del pago
+app.get('/pago/result', async (req, res) => {
+  if (!session.token || !session.userId) return res.redirect('/');
+  const id = req.query.id;
+  if (!id) return res.redirect('/productos');
+  try {
+    const r = await fetch(API_BASE + `/api/pagos/${id}`);
+    const result = await r.json();
+    res.render('pago_result', { login: !!session.token, result, currentPage: 'pago' });
+  } catch (e) {
+    res.render('pago_result', { login: !!session.token, result: null, currentPage: 'pago', error: 'No se pudo obtener estado de pago' });
+  }
+});
+
 // INICIALIZACIÓN DEL SERVIDOR
 
 // Inicia el servidor en puerto 3000
